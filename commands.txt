@@ -1,0 +1,12 @@
+
+
+
+psycopg2 2.9.10(first need to have microsoft c++ toolkit )
+pip install psycopg2
+
+to see installed version of psycopg2
+pip show psycopg2
+
+
+paho-mqtt 2.1.0
+pip install paho-mqtt
