@@ -26,6 +26,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/dashboard"
@@ -35,7 +36,6 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
