@@ -13,6 +13,7 @@ account_service.add_middleware(
         "http://127.0.0.1:8081",
         "http://0.0.0.0:8002",
         "http://0.0.0.0:8003",
+        "http://localhost:8081"
     ],
     allow_credentials=True,
     allow_methods=["*"],

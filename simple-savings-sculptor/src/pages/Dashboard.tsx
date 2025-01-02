@@ -44,11 +44,11 @@
 //   //       const data = await response.json();
 //   //       setExpenses(data.expenses);
 //   //       setTotalExpenses(data.totalExpenses);
-        
+
 //   //       const monthlyData = await fetch(`${apiUrl}/monthly-expenses`);
 //   //       const monthlyDataJson = await monthlyData.json();
 //   //       setMonthlyExpensesData(monthlyDataJson.monthlyExpenses);
-        
+
 //   //       const savingsGoalResponse = await fetch(`${apiUrl}/savings-goal`);
 //   //       const savingsGoalData = await savingsGoalResponse.json();
 //   //       setSavingsGoal(savingsGoalData.savingsGoal);
@@ -56,7 +56,7 @@
 //   //       console.error("Error fetching data:", error);
 //   //     }
 //   //   };
-    
+
 //   //   // fetchExpenses();
 //   // }, []);
 
@@ -68,14 +68,14 @@
 //           console.error("User ID not found in local storage.");
 //           return;
 //         }
-  
+
 //         const response = await fetch(`${apiUrl}/get-expenses/${user.id}`);
 //         if (!response.ok) {
 //           throw new Error(`Failed to fetch expenses: ${response.statusText}`);
 //         }
-  
+
 //         const data = await response.json();
-  
+
 //         // Update state with fetched data
 //         setExpenses(data.expenses);
 //         setTotalExpenses(data.total_expenses);
@@ -83,10 +83,10 @@
 //         console.error("Error fetching expenses:", error);
 //       }
 //     };
-  
+
 //     fetchExpenses();
 //   }, []);
-  
+
 
 
 
@@ -99,16 +99,16 @@
 //       });
 //       return;
 //     }
-  
+
 //     const expenseData = { 
 //       user_id: userId, // Ensure the correct userId
 //       expense_description: newExpense.description, // Maps to 'expense_description' field
 //       expense_amount: parseFloat(newExpense.amount), // Maps to 'expense_amount' field
 //       expense_type: newExpense.category, // Maps to 'expense_type' field
 //     };
-  
+
 //     setIsDialogOpen(false);
-  
+
 //     try {
 //       // Make API call to backend to add the expense
 //       const response = await fetch(`${apiUrl}/add-expense`, {
@@ -118,9 +118,9 @@
 //         },
 //         body: JSON.stringify(expenseData),
 //       });
-  
+
 //       const result = await response.json();
-  
+
 //       if (response.ok) {
 //         // Successfully added the expense, update state
 //         setExpenses(result.expenses);
@@ -158,7 +158,7 @@
 //       });
 //       return;
 //     }
-  
+
 //     try {
 //       const response = await fetch(`${apiUrlIncome}/set-savings-goal`, {
 //         method: "POST",
@@ -168,10 +168,10 @@
 //         body: JSON.stringify({
 //           user_id: userId, // Pass user_id
 //           goal: savingsGoal, // Pass the savings goal
-        
+
 //         }),
 //       });
-  
+
 //       if (response.ok) {
 //         const data = await response.json(); // Get the response data
 //         toast({
@@ -192,7 +192,7 @@
 //       });
 //     }
 //   };
-  
+
 
 //   return (
 //     <div className="min-h-screen bg-gray-50 p-8">
@@ -343,34 +343,84 @@ const Dashboard = () => {
   const [monthlyIncome, setMonthlyIncome] = useState<number | null>(null);
   const [monthlyExpensesData, setMonthlyExpensesData] = useState([]);
   const [searchParams] = useSearchParams();
+  let getAccountData = {};
   const userId = searchParams.get("userId");
 
-  const apiUrl = "http://0.0.0.0:8002"; 
-  const apiUrlIncome = "http://0.0.0.0:8003"; 
+  const apiUrl = "http://0.0.0.0:8002";
+  const apiUrlIncome = "http://0.0.0.0:8003";
+
+  // useEffect(() => {
+  //   const fetchExpenses = async () => {
+  //     try {
+  //       const user = JSON.parse(localStorage.getItem("user")); 
+  //       if (!user || !user.id) {
+  //         console.error("User ID not found in local storage.");
+  //         return;
+  //       }
+
+  //       const response = await fetch(`${apiUrl}/get-expenses/${user.id}`);
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to fetch expenses: ${response.statusText}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("data")
+  //       setExpenses(data.expenses);
+  //       setTotalExpenses(data.total_expenses);
+  //     } catch (error) {
+  //       console.error("Error fetching expenses:", error);
+  //     }
+  //   };
+  //   fetchExpenses();
+  // }, []);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchExpensesAndSavings = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("user")); 
+        const user = JSON.parse(localStorage.getItem("user"));
         if (!user || !user.id) {
           console.error("User ID not found in local storage.");
           return;
         }
 
-        const response = await fetch(`${apiUrl}/get-expenses/${user.id}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch expenses: ${response.statusText}`);
+        // Fetch expenses data
+        const expensesResponse = await fetch(`${apiUrl}/get-expenses/${user.id}`);
+        if (!expensesResponse.ok) {
+          throw new Error(`Failed to fetch expenses: ${expensesResponse.statusText}`);
         }
+        const expensesData = await expensesResponse.json();
+        setExpenses(expensesData.expenses);
+        setTotalExpenses(expensesData.total_expenses);
 
-        const data = await response.json();
-        console.log("data")
-        setExpenses(data.expenses);
-        setTotalExpenses(data.total_expenses);
+        // Fetch savings goal data
+        const savingsResponse = await fetch(`${apiUrlIncome}/get-savings-goal/${user.id}`);
+        if (!savingsResponse.ok) {
+          throw new Error(`Failed to fetch savings goal: ${savingsResponse.statusText}`);
+        }
+        const savingsData = await savingsResponse.json();
+        console.log("Savings data:", savingsData);
+
+        // setSavingsGoal(savingsData.saving_goal)
+        // getAccountData['savingGoal'] = savingsData.saving_goal
+
+        // getAccountData['percentage'] = savingsData.percentage
+        //   getAccountData['spent'] = savingsData.spent
+        //   getAccountData['remaining'] = savingsData.remaining
+        //   getAccountData['monthly_income'] = savingsData.monthly_income
+        //   setMonthlyIncome(savingsData.monthly_income)
+        //   console.log('getAccountData', savingsData.monthly_income)
+        // percentage: savingsData.percentage,
+        // spent: savingsData.spent,
+
+        // remaining: savingsData.remaining,
+        // monthlyIncome: savingsData.monthly_income,
+        // });
       } catch (error) {
-        console.error("Error fetching expenses:", error);
+        console.error("Error fetching data:", error);
       }
     };
-    fetchExpenses();
+
+    fetchExpensesAndSavings();
   }, []);
 
   const handleAddExpense = async () => {
@@ -383,8 +433,8 @@ const Dashboard = () => {
       return;
     }
 
-    const expenseData = { 
-      user_id: userId, 
+    const expenseData = {
+      user_id: userId,
       expense_description: newExpense.description,
       expense_amount: parseFloat(newExpense.amount),
       expense_type: newExpense.category,
@@ -436,7 +486,7 @@ const Dashboard = () => {
   //     });
   //     return;
   //   }
-  
+
   //   try {
   //     const response = await fetch(`${apiUrlIncome}/set-savings-goal`, {
   //       method: "POST",
@@ -449,7 +499,7 @@ const Dashboard = () => {
   //         income: monthlyIncome,
   //       }),
   //     });
-  
+
   //     if (response.ok) {
   //       const data = await response.json();
   //       toast({
@@ -474,7 +524,7 @@ const Dashboard = () => {
 
   const handleAddSavingsGoal = async () => {
     if (
-      savingsGoal == null || savingsGoal <= 0 || 
+      savingsGoal == null || savingsGoal <= 0 ||
       monthlyIncome == null || monthlyIncome <= 0
     ) {
       toast({
@@ -484,7 +534,7 @@ const Dashboard = () => {
       });
       return;
     }
-  
+
     try {
       const response = await fetch(`${apiUrlIncome}/set-savings-goal`, {
         method: "POST",
@@ -497,7 +547,7 @@ const Dashboard = () => {
           monthly_income: monthlyIncome,
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         toast({
@@ -524,9 +574,9 @@ const Dashboard = () => {
       });
     }
   };
-  
-  
-  
+
+
+
 
   const remainingAmount = monthlyIncome && savingsGoal ? monthlyIncome - savingsGoal : 0;
   const progressBarPercentage = totalExpenses && savingsGoal ? (totalExpenses / savingsGoal) * 100 : 0;

@@ -107,7 +107,7 @@ auth_service = FastAPI()
 # Allow cross-origin requests from the frontend's origin
 auth_service.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://127.0.0.1:8080","http://192.168.0.102:8080","http://127.0.0.1:8081","http://0.0.0.0:8001"],  # Add your frontend URL
+    allow_origins=["http://localhost:8080", "http://127.0.0.1:8080","http://192.168.0.102:8080","http://127.0.0.1:8081","http://0.0.0.0:8001","http://localhost:8081"], 
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
