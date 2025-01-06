@@ -5,7 +5,7 @@ from sendgrid.helpers.mail import Mail
 
 # RabbitMQ and SendGrid configuration
 RABBITMQ_HOST = "192.168.0.100"  # Update this for deployment
-SENDGRID_API_KEY = "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"
+
 
 def send_email(user_id, description, amount, category,Remail):
     """Send an email notification via SendGrid."""

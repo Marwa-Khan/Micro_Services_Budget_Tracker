@@ -58,3 +58,6 @@ http://localhost:15672
 docker run --rm -it --name expense_service_newcheck -e MQTT_URL=mqtt.bibimarw.2.rahtiapp.fi -e MQTT_PORT=1883 -e CLIENT_ID=bibimarw marwakhan/expense_service:1.0
 
 
+
+SENDGRID_API_KEY = "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"
+
