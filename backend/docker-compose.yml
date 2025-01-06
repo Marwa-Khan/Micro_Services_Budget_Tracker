@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  # RabbitMQ Service
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: "rabbitmq-container"
+    ports:
+      - "5673:5672"  # External port
+      - "15673:15672" # External management port
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - backend-network
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  # Persist RabbitMQ data
+
+  # PostgreSQL Database for Auth Service
+  auth_db:
+    image: "postgres:13"
+    container_name: "auth-db"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: user_services
+    ports:
+      - "5433:5432"    # Change external port to avoid conflict
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # PostgreSQL Database for Expense Service
+  expense_db:
+    image: "postgres:13"
+    container_name: "expense-db"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: expense_service
+    ports:
+      - "5434:5432"  # Change external port to avoid conflict
+    volumes:
+      - expense_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # PostgreSQL Database for Account Service
+  account_db:
+    image: "postgres:13"
+    container_name: "account-db"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: account_service
+    ports:
+      - "5435:5432"  # Change external port to avoid conflict
+    volumes:
+      - account_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # Auth Service
+  auth_service:
+    image: "marwakhan/auth_service:1.0"
+    container_name: "auth-service-container"
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgres://postgres:root@auth_db:5432/user_services
+    depends_on:
+      - auth_db
+    networks:
+      - backend-network
+
+  # Expense Service
+  expense_service:
+    image: "marwakhan/expense_service:1.0"
+    container_name: "expense-service-container"
+    ports:
+      - "8002:8002"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - DATABASE_URL=postgres://postgres:root@expense_db:5432/expense_service
+    depends_on:
+      - rabbitmq
+      - expense_db
+    networks:
+      - backend-network
+
+  # Account Service
+  account_service:
+    image: "marwakhan/account_service:1.0"
+    container_name: "account-service-container"
+    ports:
+      - "8003:8003"
+    environment:
+      - DATABASE_URL=postgres://postgres:root@account_db:5432/account_service
+    depends_on:
+      - account_db
+    networks:
+      - backend-network
+
+  # Email Worker
+  email_worker:
+    image: "marwakhan/email_worker:1.0"
+    container_name: "email-worker-container"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - SENDGRID_API_KEY=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  # Hardcoded SendGrid API Key
+    depends_on:
+      - rabbitmq
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  auth_postgres_data:
+  expense_postgres_data:
+  account_postgres_data:
+  rabbitmq_data:

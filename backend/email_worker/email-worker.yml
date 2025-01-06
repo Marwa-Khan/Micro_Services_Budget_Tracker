@@ -5,7 +5,7 @@ metadata:
   namespace: sdx-assignment-bibimarw
 data:
   RABBITMQ_HOST: guest # Internal service name for RabbitMQ
-  # API KEY ATTRIBUTE
+  SENDGRID_API_KEY: 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
 ---
 apiVersion: apps/v1
 kind: Deployment
