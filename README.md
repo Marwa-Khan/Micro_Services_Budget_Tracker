@@ -9,6 +9,9 @@ This project is a microservice-based application that helps users manage their d
 - **Account Management**: Provides account-related functionalities.
 - **Email Notifications**: Sends emails using RabbitMQ and SendGrid when expenses exceed $10.
 - **Microservice Architecture**: Services are decoupled, each with its own database and Docker container.
+- **PostgreSQL Database**: Each service uses its own PostgreSQL database.
+- **Deployment on Rahti**: All services are deployed on the Rahti cloud platform.
+
 
 ---
 
@@ -55,6 +58,7 @@ Ensure you have the following installed:
 - [Node.js](https://nodejs.org/)
 - [Python 3.8+](https://www.python.org/downloads/)
 - [Docker](https://www.docker.com/)
+- PostgreSQL database server
 - RabbitMQ
 
 ---
@@ -71,6 +75,16 @@ npm install
 npm run dev
 ```
 
+
+### Database Setup
+Ensure PostgreSQL is running and create separate databases for each service 
+ - auth_service,
+ - expense_service,
+ - account_service
+Update the connection details in each service's `database.py` file.
+
+
+
 ### Backend
 Navigate to the `backend` folder and set up the virtual environment:
 
@@ -86,29 +100,6 @@ source venv/bin/activate
 
 # Install required packages
 pip install -r requirements.txt
-```
-
-Start each service individually:
-
-```bash
-# Start the authentication service
-cd auth_service
-uvicorn main:app --reload --host 0.0.0.0 --port 8001
-
-# Start the expense service
-cd ../expense_service
-uvicorn main:app --reload --host 0.0.0.0 --port 8002
-
-# Start the account service
-cd ../account_service
-uvicorn main:app --reload --host 0.0.0.0 --port 8003
-```
-
-Start the email worker:
-
-```bash
-cd ../email_worker
-python main.py
 ```
 
 ### RabbitMQ Setup
@@ -138,7 +129,8 @@ Access RabbitMQ Management at [http://localhost:15672](http://localhost:15672).
 Each service has its own Dockerfile. Use the `docker-compose.yml` file to build and start all services:
 
 ```bash
-docker-compose up --build
+cd backend
+  docker-compose up --build
 ```
 
 This will:
@@ -189,8 +181,9 @@ python email_worker/main.py
 docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
+## Deployment on Rahti
+All services are deployed on the Rahti cloud platform. Ensure you configure each service's deployment file to include environment variables for RabbitMQ and PostgreSQL connection details.
+
 
 ## Contributing
 Contributions are welcome! Feel free to fork this repository and submit a pull request.
-
-
