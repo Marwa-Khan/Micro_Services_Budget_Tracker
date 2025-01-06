@@ -26,19 +26,23 @@ project_folder
 |   |   |-- database.py
 |   |   |-- main.py
 |   |   |-- routes.py
+|   |   |-- Dockerfile
 |   |
 |   |-- expense_service      # Manages expense records
 |   |   |-- database.py
 |   |   |-- main.py
 |   |   |-- routes.py
+|   |   |-- Dockerfile
 |   |
 |   |-- account_service      # Handles account-related functionalities
 |   |   |-- database.py
 |   |   |-- main.py
 |   |   |-- routes.py
+|   |   |-- Dockerfile
 |   |
 |   |-- email_worker         # Email worker service for SendGrid and RabbitMQ
-|       |-- main.py
+|   |   |-- main.py
+|   |   |-- Dockerfile
 |
 |-- docker-compose.yml       # Compose file to manage Docker containers
 ```
