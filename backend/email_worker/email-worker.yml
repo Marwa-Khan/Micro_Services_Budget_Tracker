@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: email-worker-config
+  namespace: sdx-assignment-bibimarw
+data:
+  RABBITMQ_HOST: guest # Internal service name for RabbitMQ
+  SENDGRID_API_KEY: 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
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-worker
+  namespace: sdx-assignment-bibimarw
+  labels:
+    app: email-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: email-worker
+  template:
+    metadata:
+      labels:
+        app: email-worker
+    spec:
+      containers:
+      - name: email-worker
+        image: marwakhan/email_worker:1.0
+        env:
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: email-worker-config
+              key: RABBITMQ_HOST
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: email-worker-config
+              key: SENDGRID_API_KEY
+        ports:
+        - containerPort: 5672 # RabbitMQ Port
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-worker-service
+  namespace: sdx-assignment-bibimarw
+spec:
+  selector:
+    app: email-worker
+  ports:
+    - protocol: TCP
+      port: 5672 # RabbitMQ Port
+      targetPort: 5672
+  type: ClusterIP

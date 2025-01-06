@@ -1,327 +1,4 @@
 
-
-
-
-
-
-
-// import { useState, useEffect } from "react";
-// import { useAuth } from "@/contexts/AuthContext";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-// import { Input } from "@/components/ui/input";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { useToast } from "@/hooks/use-toast";
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-// import { useSearchParams } from "react-router-dom";
-
-
-// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-// const Dashboard = () => {
-//   const { user, logout } = useAuth();
-//   const { toast } = useToast();
-//   const [newExpense, setNewExpense] = useState({ description: "", amount: "", category: "food" });
-//   const [isDialogOpen, setIsDialogOpen] = useState(false);
-//   const [expenses, setExpenses] = useState([]);
-//   const [totalExpenses, setTotalExpenses] = useState(0);
-//   const [savingsGoal, setSavingsGoal] = useState<number | null>(null);
-//   const [monthlyExpensesData, setMonthlyExpensesData] = useState([]);
-//   const [searchParams] = useSearchParams();
-//   const userId = searchParams.get("userId");
-
-//   // Mock API endpoint
-//   const apiUrl = "http://0.0.0.0:8002"; 
-//   const apiUrlIncome = "http://0.0.0.0:8003"; 
-
-//   // Fetch Expenses and Savings Goals
-//   // useEffect(() => {
-//   //   // Fetch current expenses and savings goal from the backend
-//   //   const fetchExpenses = async () => {
-//   //     try {
-//   //       const response = await fetch(`${apiUrl}/expenses`);
-//   //       const data = await response.json();
-//   //       setExpenses(data.expenses);
-//   //       setTotalExpenses(data.totalExpenses);
-
-//   //       const monthlyData = await fetch(`${apiUrl}/monthly-expenses`);
-//   //       const monthlyDataJson = await monthlyData.json();
-//   //       setMonthlyExpensesData(monthlyDataJson.monthlyExpenses);
-
-//   //       const savingsGoalResponse = await fetch(`${apiUrl}/savings-goal`);
-//   //       const savingsGoalData = await savingsGoalResponse.json();
-//   //       setSavingsGoal(savingsGoalData.savingsGoal);
-//   //     } catch (error) {
-//   //       console.error("Error fetching data:", error);
-//   //     }
-//   //   };
-
-//   //   // fetchExpenses();
-//   // }, []);
-
-//   useEffect(() => {
-//     const fetchExpenses = async () => {
-//       try {
-//         const user = JSON.parse(localStorage.getItem("user")); // Retrieve user info from localStorage
-//         if (!user || !user.id) {
-//           console.error("User ID not found in local storage.");
-//           return;
-//         }
-
-//         const response = await fetch(`${apiUrl}/get-expenses/${user.id}`);
-//         if (!response.ok) {
-//           throw new Error(`Failed to fetch expenses: ${response.statusText}`);
-//         }
-
-//         const data = await response.json();
-
-//         // Update state with fetched data
-//         setExpenses(data.expenses);
-//         setTotalExpenses(data.total_expenses);
-//       } catch (error) {
-//         console.error("Error fetching expenses:", error);
-//       }
-//     };
-
-//     fetchExpenses();
-//   }, []);
-
-
-
-
-//   const handleAddExpense = async () => {
-//     if (!newExpense.description || !newExpense.amount) {
-//       toast({
-//         title: "Error",
-//         description: "Please fill in all fields",
-//         variant: "destructive",
-//       });
-//       return;
-//     }
-
-//     const expenseData = { 
-//       user_id: userId, // Ensure the correct userId
-//       expense_description: newExpense.description, // Maps to 'expense_description' field
-//       expense_amount: parseFloat(newExpense.amount), // Maps to 'expense_amount' field
-//       expense_type: newExpense.category, // Maps to 'expense_type' field
-//     };
-
-//     setIsDialogOpen(false);
-
-//     try {
-//       // Make API call to backend to add the expense
-//       const response = await fetch(`${apiUrl}/add-expense`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(expenseData),
-//       });
-
-//       const result = await response.json();
-
-//       if (response.ok) {
-//         // Successfully added the expense, update state
-//         setExpenses(result.expenses);
-//         setTotalExpenses(result.total_expenses);
-//         toast({
-//           title: "Success",
-//           description: `Added ${newExpense.amount} for ${newExpense.description}`,
-//         });
-//         setNewExpense({ description: "", amount: "", category: "food" }); // Reset form
-//         setIsDialogOpen(false); // Close dialog
-//       } else {
-//         toast({
-//           title: "Error",
-//           description: result.message || "Something went wrong.",
-//         });
-//       }
-//     } catch (error) {
-//       console.error("Error adding expense:", error);
-//       toast({
-//         title: "Error",
-//         description: "Failed to connect to the backend.",
-//       });
-//     }
-//   };
-
-
-
-
-//   const handleAddSavingsGoal = async () => { // Assuming userId is passed to this function
-//     if (savingsGoal == null || savingsGoal <= 0) {
-//       toast({
-//         title: "Error",
-//         description: "Please set a valid savings goal.",
-//         variant: "destructive",
-//       });
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch(`${apiUrlIncome}/set-savings-goal`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           user_id: userId, // Pass user_id
-//           goal: savingsGoal, // Pass the savings goal
-
-//         }),
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json(); // Get the response data
-//         toast({
-//           title: "Savings Goal Set",
-//           description: `Your savings goal of $${data.monthly_saving_goal} has been set!`,
-//         });
-//       } else {
-//         toast({
-//           title: "Error",
-//           description: "Failed to set savings goal.",
-//         });
-//       }
-//     } catch (error) {
-//       console.error("Error setting savings goal:", error);
-//       toast({
-//         title: "Error",
-//         description: "Failed to connect to the backend.",
-//       });
-//     }
-//   };
-
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 p-8">
-//       <div className="max-w-7xl mx-auto">
-//         <div className="flex justify-between items-center mb-8">
-//           <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.email}{userId}</h1>
-//           <Button onClick={logout} variant="outline">Logout</Button>
-//         </div>
-
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//           {/* Expenses Card */}
-//           <Card>
-//             <CardHeader>
-//               <CardTitle className="flex justify-between items-center">
-//                 <span>Recent Expenses</span>
-//                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-//                   <DialogTrigger asChild>
-//                     <Button className="bg-money hover:bg-money-dark">Add Expense</Button>
-//                   </DialogTrigger>
-//                   <DialogContent>
-//                     <DialogHeader>
-//                       <DialogTitle>Add New Expense</DialogTitle>
-//                     </DialogHeader>
-//                     <div className="space-y-4 mt-4">
-//                       <Input
-//                         placeholder="Description"
-//                         value={newExpense.description}
-//                         onChange={(e) =>
-//                           setNewExpense({ ...newExpense, description: e.target.value })
-//                         }
-//                       />
-//                       <Input
-//                         type="number"
-//                         placeholder="Amount"
-//                         value={newExpense.amount}
-//                         onChange={(e) =>
-//                           setNewExpense({ ...newExpense, amount: e.target.value })
-//                         }
-//                       />
-//                       {/* <Select
-//                         value={newExpense.category}
-//                         onValueChange={(value) =>
-//                           setNewExpense({ ...newExpense, category: value })
-//                         }
-//                       >
-//                         <SelectTrigger>
-//                           <SelectValue placeholder="Category" />
-//                         </SelectTrigger>
-//                         <SelectContent>
-//                           <SelectItem value="food">Food</SelectItem>
-//                           <SelectItem value="transport">Transport</SelectItem>
-//                           <SelectItem value="entertainment">Entertainment</SelectItem>
-//                         </SelectContent>
-//                       </Select> */}
-//                       <Button onClick={handleAddExpense} className="w-full">
-//                         Add Expense
-//                       </Button>
-//                     </div>
-//                   </DialogContent>
-//                 </Dialog>
-//               </CardTitle>
-//             </CardHeader>
-//             <CardContent>
-//               <div className="space-y-4">
-//                 {expenses.length === 0 ? (
-//                   <span>No expenses added yet.</span>
-//                 ) : (
-//                   expenses.map((expense, index) => (
-//                     <div key={index} className="flex justify-between items-center">
-//                       <span>{expense.description}</span>
-//                       <span className="text-money">${expense.amount}</span>
-//                     </div>
-//                   ))
-//                 )}
-//                 <div className="flex justify-between items-center font-bold">
-//                   <span>Total</span>
-//                   <span className="text-money">${totalExpenses}</span>
-//                 </div>
-//               </div>
-//             </CardContent>
-//           </Card>
-
-//           {/* Savings Goals Card */}
-//           <Card>
-//             <CardHeader>
-//               <CardTitle>Savings Goal</CardTitle>
-//             </CardHeader>
-//             <CardContent>
-//               <div className="space-y-4">
-//                 <Input
-//                   type="number"
-//                   placeholder="Enter your savings goal"
-//                   value={savingsGoal || ""}
-//                   onChange={(e) => setSavingsGoal(Number(e.target.value))}
-//                 />
-//                 <Button onClick={handleAddSavingsGoal} className="w-full">
-//                   Set Savings Goal
-//                 </Button>
-//               </div>
-//             </CardContent>
-//           </Card>
-
-//           {/* Monthly Expenses Chart */}
-//           <Card>
-//             <CardHeader>
-//               <CardTitle>Monthly Expenses</CardTitle>
-//             </CardHeader>
-//             <CardContent>
-//               <ResponsiveContainer width="100%" height={250}>
-//                 <BarChart data={monthlyExpensesData}>
-//                   <CartesianGrid strokeDasharray="3 3" />
-//                   <XAxis dataKey="month" />
-//                   <YAxis />
-//                   <Tooltip />
-//                   <Bar dataKey="expenses" fill="#0088FE" />
-//                 </BarChart>
-//               </ResponsiveContainer>
-//             </CardContent>
-//           </Card>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -346,33 +23,13 @@ const Dashboard = () => {
   let getAccountData = {};
   const userId = searchParams.get("userId");
 
-  const apiUrl = "http://0.0.0.0:8002";
-  const apiUrlIncome = "http://0.0.0.0:8003";
+  // const userId = searchParams.get("userId");
+  const userEmail = searchParams.get("userEmail");
+  console.log("useremaeda",userEmail)
 
-  // useEffect(() => {
-  //   const fetchExpenses = async () => {
-  //     try {
-  //       const user = JSON.parse(localStorage.getItem("user")); 
-  //       if (!user || !user.id) {
-  //         console.error("User ID not found in local storage.");
-  //         return;
-  //       }
+  const apiUrl = "http://127.0.0.1:8002";
+  const apiUrlIncome = "http://127.0.0.1:8003";
 
-  //       const response = await fetch(`${apiUrl}/get-expenses/${user.id}`);
-  //       if (!response.ok) {
-  //         throw new Error(`Failed to fetch expenses: ${response.statusText}`);
-  //       }
-
-  //       const data = await response.json();
-  //       console.log("data")
-  //       setExpenses(data.expenses);
-  //       setTotalExpenses(data.total_expenses);
-  //     } catch (error) {
-  //       console.error("Error fetching expenses:", error);
-  //     }
-  //   };
-  //   fetchExpenses();
-  // }, []);
 
   useEffect(() => {
     const fetchExpensesAndSavings = async () => {
@@ -400,14 +57,14 @@ const Dashboard = () => {
         const savingsData = await savingsResponse.json();
         console.log("Savings data:", savingsData);
 
-        // setSavingsGoal(savingsData.saving_goal)
-        // getAccountData['savingGoal'] = savingsData.saving_goal
+        setSavingsGoal(savingsData.saving_goal)
+        getAccountData['savingGoal'] = savingsData.saving_goal
 
-        // getAccountData['percentage'] = savingsData.percentage
-        //   getAccountData['spent'] = savingsData.spent
-        //   getAccountData['remaining'] = savingsData.remaining
-        //   getAccountData['monthly_income'] = savingsData.monthly_income
-        //   setMonthlyIncome(savingsData.monthly_income)
+        getAccountData['percentage'] = savingsData.percentage
+        getAccountData['spent'] = savingsData.spent
+        getAccountData['remaining'] = savingsData.remaining
+        getAccountData['monthly_income'] = savingsData.monthly_income
+        setMonthlyIncome(savingsData.monthly_income)
         //   console.log('getAccountData', savingsData.monthly_income)
         // percentage: savingsData.percentage,
         // spent: savingsData.spent,
@@ -424,6 +81,7 @@ const Dashboard = () => {
   }, []);
 
   const handleAddExpense = async () => {
+    console.log("newExpense",newExpense)
     if (!newExpense.description || !newExpense.amount) {
       toast({
         title: "Error",
@@ -434,10 +92,11 @@ const Dashboard = () => {
     }
 
     const expenseData = {
-      user_id: userId,
+      user_id: parseInt(userId),
+      user_email:userEmail,
       expense_description: newExpense.description,
       expense_amount: parseFloat(newExpense.amount),
-      expense_type: newExpense.category,
+      expense_type: "Food",
     };
 
     setIsDialogOpen(false);
@@ -458,7 +117,7 @@ const Dashboard = () => {
         setTotalExpenses(result.total_expenses);
         toast({
           title: "Success",
-          description: `Added ${newExpense.amount} for ${newExpense.description}`,
+          description:` Added ${newExpense.amount} for ${newExpense.description}`,
         });
         setNewExpense({ description: "", amount: "", category: "food" });
         setIsDialogOpen(false);
@@ -477,52 +136,9 @@ const Dashboard = () => {
     }
   };
 
-  // const handleAddSavingsGoal = async () => {
-  //   if (savingsGoal == null || savingsGoal <= 0 || monthlyIncome == null || monthlyIncome <= 0) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Please set a valid savings goal and income.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(`${apiUrlIncome}/set-savings-goal`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         user_id: userId,
-  //         goal: savingsGoal,
-  //         income: monthlyIncome,
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       toast({
-  //         title: "Savings Goal Set",
-  //         description: `Your savings goal of $${data.monthly_saving_goal} has been set!`,
-  //       });
-  //     } else {
-  //       const errorData = await response.json();
-  //       toast({
-  //         title: "Error",
-  //         description: `Failed to set savings goal: ${errorData.detail || "Unknown error"}`,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error setting savings goal:", error);
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to connect to the backend.",
-  //     });
-  //   }
-  // };
 
   const handleAddSavingsGoal = async () => {
+    console.log("monthlyIncome",monthlyIncome)
     if (
       savingsGoal == null || savingsGoal <= 0 ||
       monthlyIncome == null || monthlyIncome <= 0
@@ -574,8 +190,6 @@ const Dashboard = () => {
       });
     }
   };
-
-
 
 
   const remainingAmount = monthlyIncome && savingsGoal ? monthlyIncome - savingsGoal : 0;

@@ -16,26 +16,6 @@ const Auth = () => {
   const { toast } = useToast();
 
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   const success = isLogin
-  //     ? await login(email, password)
-  //     : await register(email, password);
-
-  //   if (success) {
-  //     toast({
-  //       title: isLogin ? "Welcome back!" : "Account created successfully!",
-  //       description: "You are now logged in.",
-  //     });
-  //     navigate("/dashboard");
-  //   } else {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to authenticate. Please try again.",
-  //     });
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +31,7 @@ const Auth = () => {
         });
         console.log("finally the user id", user);
 
-        navigate(`/dashboard?userId=${user.id}`);
+        navigate(`/dashboard?userId=${user.id}&userEmail=${user.email}`);
     } else {
         toast({
             title: "Error",

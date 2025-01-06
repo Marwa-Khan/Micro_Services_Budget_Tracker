@@ -4,8 +4,8 @@ from psycopg2 import pool
 ACCOUNT_SERVICE_CONFIG = {
     'dbname': 'account_service',
     'user': 'postgres',
-    'password': '9009',
-    'host': 'localhost',
+    'password': 'root',
+    'host': '192.168.0.100',
     'port': '5432'
 }
 
@@ -13,8 +13,8 @@ ACCOUNT_SERVICE_CONFIG = {
 EXPENSE_SERVICE_CONFIG = {
     'dbname': 'expense_service',
     'user': 'postgres',
-    'password': '9009',
-    'host': 'localhost',
+    'password': 'root',
+    'host': '192.168.0.100',
     'port': '5432'
 }
 

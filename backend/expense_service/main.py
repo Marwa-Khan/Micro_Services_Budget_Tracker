@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import expense_router
+from expense_service.routes import expense_router
 
 
 # FastAPI app
