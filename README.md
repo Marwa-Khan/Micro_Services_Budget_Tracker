@@ -72,17 +72,17 @@ Navigate to the `front-end` folder and run the following commands:
 npm install
 
 # Start the development server
+npm run build # run this command before `npm run dev`
+
 npm run dev
 ```
 
-
 ### Database Setup
 Ensure PostgreSQL is running and create separate databases for each service 
- - auth_service,
- - expense_service,
- - account_service
+ - user_services (auth_service db)
+ - expense_service (expense_serice db)
+ - account_service (account_service db)
 Update the connection details in each service's `database.py` file.
-
 
 
 ### Backend
@@ -167,10 +167,12 @@ source venv/bin/activate
 # Install requirements
 pip install -r requirements.txt
 
+# Windows user can replace 0.0.0.0 with 127.0.0.1.
+
 # Run individual services
-cd auth_service && uvicorn main:app --reload --host 0.0.0.0 --port 8001
-cd expense_service && uvicorn main:app --reload --host 0.0.0.0 --port 8002
-cd account_service && uvicorn main:app --reload --host 0.0.0.0 --port 8003
+cd auth_service && uvicorn main:auth_service --reload --host 0.0.0.0 --port 8001
+cd expense_service && uvicorn main:expense_service --reload --host 0.0.0.0 --port 8002
+cd account_service && uvicorn main:account_service --reload --host 0.0.0.0 --port 8003
 
 # Run email worker
 python email_worker/main.py
@@ -179,6 +181,7 @@ python email_worker/main.py
 ### RabbitMQ Command
 ```bash
 docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+
 ```
 
 ## Deployment on Rahti
