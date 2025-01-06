@@ -190,3 +190,8 @@ All services are deployed on the Rahti cloud platform. Ensure you configure each
 
 ## Contributing
 Contributions are welcome! Feel free to fork this repository and submit a pull request.
+
+
+
+![Project Diagram](./diagramImage.png)
+
