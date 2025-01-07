@@ -193,5 +193,5 @@ Contributions are welcome! Feel free to fork this repository and submit a pull r
 
 
 
-![Project Diagram](./DiagramImage.png)
+![Project Diagram](./arch.png)
 
